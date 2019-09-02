@@ -5,7 +5,8 @@ let cromossomos = [];
 let algoritmo = new AlgoritmoGenetico();
 
 function generate() {
-  cromossomos = Array(100).fill([1, 2, 3, 4, 5, 6, 7, 8])
+  console.log("Gerando");
+  cromossomos = Array(10).fill(1).map(() => [1, 2, 3, 4, 5, 6, 7, 8]);
 
   for (let i = 0; i < cromossomos.length; i++) {
     cromossomos[i] = { value: shuffle(cromossomos[i]), fitness: 0 };
@@ -27,7 +28,12 @@ function shuffle(array) {
 }
 
 function start() {
+  console.log("Iniciando");
+  algoritmo.maxEpoch = 10;
+  algoritmo.stopOnMax = true;
   algoritmo.startData = cromossomos;
+  algoritmo.slicePosition = 3;
+
   algoritmo.setFitness(fitness);
   algoritmo.start();
 }
@@ -38,6 +44,7 @@ function fitness(matrix) {
 
   for (let k = 0; k < matrix.length; k++) {
     let cromossomo = matrix[k];
+    count = 0;
 
     for (let i = 0; i < cromossomo.value.length; i++) {
       for (let j = 0; j < cromossomo.value.length; j++) {
@@ -46,14 +53,15 @@ function fitness(matrix) {
         }
       }
     }
-  }
 
-  matrix[k].fitness = maxFitness - (count * 2);
+    cromossomo.fitness = maxFitness - (count * 2);
+  }
 }
 
 function check(x1, x2, y1, y2) {
   return Math.abs(x1 - x2) == Math.abs(y1 - y2);
 }
 
+process.stdout.write("\u001b[2J\u001b[0;0H"); // Limpa console
 generate();
 start();
