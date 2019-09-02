@@ -8,7 +8,7 @@ function generate() {
   cromossomos = Array(100).fill([1, 2, 3, 4, 5, 6, 7, 8])
 
   for (let i = 0; i < cromossomos.length; i++) {
-    cromossomos[i] = shuffle(cromossomos[i]);
+    cromossomos[i] = { value: shuffle(cromossomos[i]), fitness: 0 };
   }
 }
 
@@ -29,59 +29,30 @@ function shuffle(array) {
 function start() {
   algoritmo.startData = cromossomos;
   algoritmo.setFitness(fitness);
+  algoritmo.start();
 }
 
 function fitness(matrix) {
-  let i = 1, j = 8, inverter = false, diagonais = matrix.length * 2 - 1;
-
-  for (let diagonal = 1; diagonal < diagonais; diagonal++) {
-
-
-  }
-}
-
-function getDiagonalCountItems(matrix, diagonal) {
-  let diagonais = matrix.length * 2 - 1;
-  let inverter = (diagonais >= matrix.length);
-  let x, y, result = 0;
-
-
-
-  return result;
-}
-
-function getUntilEnd(matrix, line, direction = "ltr") {
-  let end = false;
   let count = 0;
+  let maxFitness = 100;
 
+  for (let k = 0; k < matrix.length; k++) {
+    let cromossomo = matrix[k];
 
-  while (!end) {
-
+    for (let i = 0; i < cromossomo.value.length; i++) {
+      for (let j = 0; j < cromossomo.value.length; j++) {
+        if (i != j && check(i, j, cromossomo.value[i], cromossomo.value[j])) {
+          count++;
+        }
+      }
+    }
   }
 
-  return count;
+  matrix[k].fitness = maxFitness - (count * 2);
 }
 
-function getLineStart(matrix, line, direction = "utd") {
-  let max = matrix.length;
-  let min = 1;
-  let middle = max;
-
-  if (line < middle) {
-    if (direction == "utd") {
-      return { x: (max - line), y: 1 };
-    } else {
-      return { x: (max - line), y: max };
-    }
-  } else if (line > middle) {
-    if (direction == "utd") {
-      return { x: 1, y: (line - max) };
-    } else {
-      return { x: 1, y: (line - max) };
-    }
-  } else {
-    return direction == "utd" ? { x: max, y: min } : { x: max, y: max };
-  }
+function check(x1, x2, y1, y2) {
+  return Math.abs(x1 - x2) == Math.abs(y1 - y2);
 }
 
 generate();

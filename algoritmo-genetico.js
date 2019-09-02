@@ -6,4 +6,12 @@ module.exports = function algoritmoGenetico() {
   this.setFitness = (fitnessFunc) => {
     fitness = fitnessFunc.bind(this);
   };
+
+  this.start = () => {
+    calcFitness();
+  };
+
+  let calcFitness = () => {
+    fitness(this.data);
+  };
 }
