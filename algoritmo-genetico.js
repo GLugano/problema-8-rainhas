@@ -1,5 +1,7 @@
 module.exports = function algoritmoGenetico() {
   var fitness = () => { };
+
+  // Public
   this.data = [];
   this.epoch = 0;
   this.maxEpoch = 1;
@@ -16,19 +18,31 @@ module.exports = function algoritmoGenetico() {
     this.data = this.startData;
     this.epoch = 1;
 
-    doFitness();
+    let found = doFitness();
+    if (found.length > 0) {
+      return found;
+    }
 
     while (this.epoch <= this.maxEpoch) {
+      console.log("Época " + this.epoch);
       doCrossover();
-      doFitness();
+
+      let found = doFitness();
+      console.log(this.bestFitness);
+      if (found.length > 0) {
+        return found;
+      }
 
       this.epoch++;
     }
   };
 
+  // Private
   let doFitness = () => {
     fitness(this.data);
     identifyBest5Fitness();
+
+    return this.data.filter((cromossomo) => cromossomo.fitness === 100) || [];
   };
 
   let identifyBest5Fitness = () => {
@@ -52,7 +66,8 @@ module.exports = function algoritmoGenetico() {
   }
 
   let doCrossover = () => {
-    let maxNewChromosomes = Math.floor(this.data.length * 0.2);
+    shuffle(this.data);
+    let maxNewChromosomes = Math.floor(this.data.length * 0.8);
 
     if ((maxNewChromosomes % 2) > 0) {
       maxNewChromosomes--;
@@ -61,8 +76,10 @@ module.exports = function algoritmoGenetico() {
     let newChromosomes = [];
 
     for (let i = 0; i < maxNewChromosomes; i += 2) {
-      newChromosomes.concat(crossover(this.data[i], this.data[i + 1]));
+      newChromosomes = [...newChromosomes, ...crossover(this.data[i], this.data[i + 1])];
     }
+
+    this.data = [...this.data, ...newChromosomes];
   }
 
   let crossover = (cromossomo1, cromossomo2) => {
@@ -76,6 +93,14 @@ module.exports = function algoritmoGenetico() {
   }
 
   let fillChromosome = (piece = [], cromossomo) => {
-    return [piece, ...cromossomo.value.filter((value) => piece.indexOf(value) !== -1)];
+    return [...piece, ...cromossomo.value.filter((value) => piece.indexOf(value) === -1)];
+  }
+
+  let shuffle = (a) => {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
   }
 }
