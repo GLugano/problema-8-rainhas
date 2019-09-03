@@ -7,8 +7,10 @@ module.exports = function algoritmoGenetico() {
   this.maxEpoch = 1;
   this.startData = [];
   this.stopOnMax = false;
-  this.slicePosition = 3;
   this.bestFitness = Array(5).fill(1).map(() => ({ value: null, fitness: 0 }));
+  this.mutatePercent = 3;
+  this.slicePosition = 3;
+  this.populationThreshold = 100;
 
   this.setFitness = (fitnessFunc) => {
     fitness = fitnessFunc.bind(this);
@@ -23,14 +25,22 @@ module.exports = function algoritmoGenetico() {
       return found;
     }
 
-    while (this.epoch <= this.maxEpoch) {
+    console.log(this.epoch);
+    while (this.epoch <= this.maxEpoch || this.maxEpoch === null) {
       console.log("Época " + this.epoch);
       doCrossover();
+      mutate();
 
       let found = doFitness();
       console.log(this.bestFitness);
       if (found.length > 0) {
         return found;
+      }
+
+      console.log("Tamanho da população " + this.data.length);
+      if (this.data.length > this.populationThreshold) {
+        console.log("Diminuindo pupulação");
+        reducePopulation();
       }
 
       this.epoch++;
@@ -102,5 +112,57 @@ module.exports = function algoritmoGenetico() {
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+  }
+
+  let mutate = () => {
+    let mutateNum = Math.floor(this.data.length * (this.mutatePercent / 100));
+
+    if (mutateNum % 2 > 0) {
+      mutateNum--;
+    }
+
+    let indexes = generateNRandoms(mutateNum, this.data.length);
+
+    for (let i = 0; i < indexes.length; i++) {
+      let [pos1, pos2] = generate2Randoms();
+      [this.data[i].value[pos1], this.data[i].value[pos2]] = [this.data[i].value[pos2], this.data[i].value[pos1]];
+    }
+  }
+
+  let generate2Randoms = () => {
+    let random = Math.floor(Math.random() * (8)), pos1 = random, pos2 = random;
+
+    while (pos1 === pos2) {
+      pos2 = Math.floor(Math.random() * (8));
+    }
+
+    return [pos1, pos2];
+  }
+
+  let generateNRandoms = (num, max) => {
+    let arr = Array(num).fill(null);
+
+    for (let i = 0; i < num; i++) {
+      let num = Math.floor(Math.random() * (max - 1));
+      while (arr.findIndex((val) => val === num) !== -1) {
+        num = Math.floor(Math.random() * (max - 1));
+      }
+
+      arr[i] = num;
+    }
+
+    return arr;
+  }
+
+  let reducePopulation = () => {
+    let popNum = Math.floor(this.data.length * (80 / 100));
+
+    if (popNum % 2 > 0) {
+      popNum--;
+    }
+
+    for (let index = 0; index < popNum; index++) {
+      this.data.splice(Math.floor(Math.random() * (this.data.length - 1)), 1);
+    }
   }
 }

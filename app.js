@@ -29,10 +29,11 @@ function shuffle(array) {
 
 function start() {
   console.log("Iniciando");
-  algoritmo.maxEpoch = 10;
+  algoritmo.maxEpoch = null;
   algoritmo.stopOnMax = true;
   algoritmo.startData = cromossomos;
   algoritmo.slicePosition = 3;
+  algoritmo.populationThreshold = 300;
 
   algoritmo.setFitness(fitness);
   algoritmo.start();
