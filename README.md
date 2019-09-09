@@ -3,12 +3,13 @@ Desenvolvido com Javascript e NodeJS
 Nenhuma biblioteca dependente (ainda)
 
 ## Instalação
-Necessário NodeJS e Github instalados
+Necessário NodeJS, Github e (Anaconda ou Python + matplotlib) instalados
 Execute git clone [link do projeto], nenhuma biblioteca necesária
 
 ## Startar
+Abra o terminal (se estiver usando o Anaconda, será necessário utilizar o terminal específico dele)
+Selecione a pasta do projeto
 Execute node app.js
 
 ## Gráficos
-Está sendo desenvolvido integração com GnuPlot
-https://stackoverflow.com/questions/22426422/ploting-and-saving-figures-in-node-js-with-gnuplot/
+São gerados em Python na pasta /graficos

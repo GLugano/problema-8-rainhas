@@ -64,5 +64,11 @@ function check(x1, x2, y1, y2) {
 }
 
 process.stdout.write("\u001b[2J\u001b[0;0H"); // Limpa console
-generate();
-start();
+// generate();
+// start();
+
+const spawn = require("child_process").spawn;
+const pythonProcess = spawn('C:/Users/desenvolvimento04/ppData/Local/Continuum/anaconda3/python.exe', ["./generateGraph.py"]);
+pythonProcess.stdout.on('data', (data) => {
+  console.log(data.toString());
+});
