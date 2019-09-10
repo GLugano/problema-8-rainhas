@@ -34,14 +34,17 @@ function start() {
   algoritmo.startData = cromossomos;
   algoritmo.slicePosition = 3;
   algoritmo.populationThreshold = 300;
+  algoritmo.maxFitness = 16;
 
   algoritmo.setFitness(fitness);
-  algoritmo.start();
+  algoritmo.start().then((result) => {
+    generateGraph(result.dataToPlot);
+  });
 }
 
 function fitness(matrix) {
   let count = 0;
-  let maxFitness = 100;
+  let maxFitness = 16;
 
   for (let k = 0; k < matrix.length; k++) {
     let cromossomo = matrix[k];
@@ -63,12 +66,12 @@ function check(x1, x2, y1, y2) {
   return Math.abs(x1 - x2) == Math.abs(y1 - y2);
 }
 
-process.stdout.write("\u001b[2J\u001b[0;0H"); // Limpa console
-// generate();
-// start();
+function generateGraph(data) {
+  const spawn = require("child_process").spawn;
+  console.log( JSON.stringify({ data }));
+  spawn('python', ["./generate-graph.py", JSON.stringify({ data })]);
+}
 
-const spawn = require("child_process").spawn;
-const pythonProcess = spawn('C:/Users/desenvolvimento04/ppData/Local/Continuum/anaconda3/python.exe', ["./generateGraph.py"]);
-pythonProcess.stdout.on('data', (data) => {
-  console.log(data.toString());
-});
+process.stdout.write("\u001b[2J\u001b[0;0H"); // Limpa console
+generate();
+start();

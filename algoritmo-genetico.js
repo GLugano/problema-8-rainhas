@@ -7,6 +7,7 @@ module.exports = function algoritmoGenetico() {
   this.maxEpoch = 1;
   this.startData = [];
   this.stopOnMax = false;
+  this.maxFitness = 0;
   this.bestFitness = Array(5).fill(1).map(() => ({ value: null, fitness: 0 }));
   this.mutatePercent = 3;
   this.slicePosition = 3;
@@ -17,34 +18,41 @@ module.exports = function algoritmoGenetico() {
   };
 
   this.start = () => {
-    this.data = this.startData;
-    this.epoch = 1;
+    return new Promise((resolve) => {
+      this.data = this.startData;
+      this.epoch = 1;
 
-    let found = doFitness();
-    if (found.length > 0) {
-      return found;
-    }
-
-    console.log(this.epoch);
-    while (this.epoch <= this.maxEpoch || this.maxEpoch === null) {
-      console.log("Época " + this.epoch);
-      doCrossover();
-      mutate();
 
       let found = doFitness();
-      console.log(this.bestFitness);
+      let dataToPlot = [findActualMax()];
       if (found.length > 0) {
-        return found;
+        resolve({ found, dataToPlot });
+        return;
       }
 
-      console.log("Tamanho da população " + this.data.length);
-      if (this.data.length > this.populationThreshold) {
-        console.log("Diminuindo pupulação");
-        reducePopulation();
-      }
+      console.log(this.epoch);
+      while (this.epoch <= this.maxEpoch || this.maxEpoch === null) {
+        console.log("Época " + this.epoch);
+        doCrossover();
+        mutate();
 
-      this.epoch++;
-    }
+        let found = doFitness();
+        console.log(this.bestFitness);
+        dataToPlot.push(findActualMax());
+        if (found.length > 0) {
+          resolve({ found, dataToPlot });
+          return;
+        }
+
+        console.log("Tamanho da população " + this.data.length);
+        if (this.data.length > this.populationThreshold) {
+          console.log("Diminuindo pupulação");
+          reducePopulation();
+        }
+
+        this.epoch++;
+      }
+    });
   };
 
   // Private
@@ -52,7 +60,7 @@ module.exports = function algoritmoGenetico() {
     fitness(this.data);
     identifyBest5Fitness();
 
-    return this.data.filter((cromossomo) => cromossomo.fitness === 100) || [];
+    return this.data.filter((cromossomo) => cromossomo.fitness === this.maxFitness) || [];
   };
 
   let identifyBest5Fitness = () => {
@@ -164,5 +172,19 @@ module.exports = function algoritmoGenetico() {
     for (let index = 0; index < popNum; index++) {
       this.data.splice(Math.floor(Math.random() * (this.data.length - 1)), 1);
     }
+  }
+
+  let findActualMax = () => {
+    let max = 0;
+    let array = this.data;
+    let a = array.length;
+
+    for (let i = 0; i < a; i++) {
+      if (array[i].fitness > max) {
+        max = array[i].fitness;
+      }
+    }
+
+    return max;
   }
 }
