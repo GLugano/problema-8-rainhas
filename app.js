@@ -6,7 +6,7 @@ let algoritmo = new AlgoritmoGenetico();
 
 function generate() {
   console.log("Gerando");
-  cromossomos = Array(10).fill(1).map(() => [1, 2, 3, 4, 5, 6, 7, 8]);
+  cromossomos = Array(20).fill(1).map(() => [1, 2, 3, 4, 5, 6, 7, 8]);
 
   for (let i = 0; i < cromossomos.length; i++) {
     cromossomos[i] = { value: shuffle(cromossomos[i]), fitness: 0 };
